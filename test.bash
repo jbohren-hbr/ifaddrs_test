@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 GETIFADDRS_IFACES="$(./build/print_ifaddrs | cut -d' ' -f1 | sort)"
-IFCONFIG_IFACES="$(ifconfig | grep Link | cut -d' ' -f1 | sort)"
+IFCONFIG_IFACES="$(ifconfig | grep -B1 "inet addr" | grep " Link" | cut -d' ' -f1)"
 
 if [[ $GETIFADDRS_IFACES == $IFCONFIG_IFACES ]] ; then
   >&2 echo "matching."
