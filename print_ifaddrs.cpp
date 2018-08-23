@@ -14,8 +14,10 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <netinet/in.h>
+#include <linux/if.h>
 #include <ifaddrs.h>
 #include <linux/if_packet.h>
+#include <string.h>
 
 /**
  * `print_sockaddr` is derived from StackOverflow answer:
@@ -77,6 +79,8 @@ int main(int argc, char** argv) {
 
     struct ifaddrs *ifaddr, *ifa;
 
+    int up_only = (argc > 1) ? (strcmp(argv[1],"up") == 0) : (0);
+
     // Get interface addresses
     if (getifaddrs(&ifaddr) == -1) {
       return 1;
@@ -85,6 +89,8 @@ int main(int argc, char** argv) {
     // Iterate over all the interface addresses
     for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next)
     {
+      if (up_only && !(ifa->ifa_flags & IFF_UP))
+        continue;
       if (ifa->ifa_addr == NULL)
         continue;
        
